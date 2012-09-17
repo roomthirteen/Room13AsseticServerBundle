@@ -20,7 +20,7 @@ class AsseticServer
   handleRequest: (request, response) ->
     # if a url is not mapped, it might be a static file resource not handled by assetic
     if not @resources.hasOwnProperty(request.url)
-      absPath = @documentRoot+request.url
+      absPath = @symfony.documentRoot+request.url
       try
         stats = Fs.lstatSync absPath
         # register newly found file as resource
@@ -31,10 +31,9 @@ class AsseticServer
     @sendContent resource,request,response
 
   getResource: (url) ->
-    resource = @resources[url]
-    if not resource
-      resource = new UnknownResource(url)
-    return resource
+    if not @resources[url]
+      return new UnknownResource(url)
+    return @resources[url]
 
   sendContent: (resource,request,response) ->
     if resource.content and resource.etag and request.headers['if-none-match'] and resource.etag == request.headers['if-none-match']
@@ -45,7 +44,7 @@ class AsseticServer
       return
 
     resource.get (content) =>
-      response.writeHead 200,
+      response.writeHead resource.error | 200
         'Content-Type': resource.mime
         'Etag': resource.etag
       response.end content
@@ -56,12 +55,39 @@ class AsseticServer
       @server.listen @port
       console.log "server: on your demand"
 
+      # watch symfony asset list for changes
+      setInterval @checkAssetsChanged.bind(this),2000
+
+  checkAssetsChanged: ->
+    @symfony.readAssets (assets) =>
+      newResources = {}
+      # get symfony registered assets
+      for url,files of assets
+        url = '/'+url
+        if not @resources[url]
+          # new asset found
+          console.log "server: new resource "+url
+          resource = new AsseticResource url,files,@symfony
+        else
+          # asset still exists
+          resource = @resources[url]
+        newResources[url]=resource
+      # now we can remove old assets
+      for url,resource of @resources
+        if resource.file
+          newResources[url]=resource
+        else if not newResources[url]
+          console.log "old resource "+url
+      # from now on serve only the current assets
+      @resources = newResources
+
   reloadAssets: (cbl) ->
     @urls = {}
     @symfony.readAssets (assets) =>
       for url,files of assets
+        url = '/'+url;
         resource = new AsseticResource url,files,@symfony
-        @resources['/'+url] = resource
+        @resources[url] = resource
       cbl()
 
 
@@ -122,6 +148,7 @@ class StaticResource
 
 class UnknownResource extends Resource
   mime: 'text/html'
+  error: 404
   get: (done) ->
     done "<!DOCTYPE html>
     <html>
