@@ -26,8 +26,8 @@ Afterwards open your config.yml and add the following bundle configuration:
 Now we need to configure assetic configuration to it will output a url directing to the assetserver instead
 of directing to the normal webserver. Change the following lines in your config.yml accordingly:
 
-framework:
-    templating:
+    framework:
+      templating:
         engines: [twig]
         assets_base_urls:
             # server and port of the assetic server
