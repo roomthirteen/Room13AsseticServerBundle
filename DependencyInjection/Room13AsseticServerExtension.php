@@ -22,7 +22,9 @@ class Room13AsseticServerExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+        foreach(array('port','documentRoot','consoleCommand') as $key)
+        {
+            $container->setParameter('room13.assetic-server.config.'.$key,$config[$key]);
+        }
     }
 }

@@ -20,9 +20,15 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('room13_assetic_server');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+        ->children()
+            ->booleanNode('enabled')->defaultTrue()->end()
+            ->scalarNode('port')->cannotBeEmpty()->defaultValue(8124)->end()
+            ->scalarNode('documentRoot')->cannotBeEmpty()->defaultValue('web')->end()
+            ->scalarNode('consoleCommand')->cannotBeEmpty()->defaultValue('./bin/console')->end()
+        ->end()
+    ;
+
 
         return $treeBuilder;
     }
