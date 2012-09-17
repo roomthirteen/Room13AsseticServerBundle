@@ -28,7 +28,6 @@ of directing to the normal webserver. Change the following lines in your config.
 
     framework:
       templating:
-        engines: [twig]
         assets_base_urls:
             # server and port of the assetic server
             http: [http://localhost:8124/]
