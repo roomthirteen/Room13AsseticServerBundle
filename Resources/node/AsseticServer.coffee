@@ -19,7 +19,7 @@ class AsseticServer
 
   handleRequest: (request, response) ->
     # if a url is not mapped, it might be a static file resource not handled by assetic
-    if not @resources.hasOwnProperty(request.url)
+    if not @resources[request.url]
       absPath = @symfony.documentRoot+request.url
       try
         stats = Fs.lstatSync absPath
@@ -124,6 +124,8 @@ class AsseticResource
 
 
 
+
+
 class StaticResource
   constructor: (@url,@file) ->
     @mime = Mime.lookup(@file)
@@ -143,7 +145,7 @@ class StaticResource
       console.log "server: load static",@url
       Fs.readFile @file, (error,content) =>
         @content = content
-        @etag = Crypto.createHash('md5').update(@content).digest("hex")
+        @etag = Crypto.createHash('md5').update(@content).digest('hex')
         done @content
 
 class UnknownResource extends Resource

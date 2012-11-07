@@ -8,7 +8,7 @@ module.exports = class SymfonyBridge
     cmd = 'room13:assetic-server:dump-asset '+group
     cmd+= ' '+index if index
     @command cmd, (data) =>
-      if not data
+      if data != "" && not data
         console.log "server: ERROR dumping asset "+group+" "+index
         return
       done(data)
