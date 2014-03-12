@@ -1,0 +1,24 @@
+{
+    "name": "room13/assetis-server-bundle",
+    "type": "library",
+    "description": "A standalone asset server to replace the tardy ./bin/console assetic:dump --watch command.",
+    "keywords": ["symfony","assets","assetic"],
+    "homepage": "https://github.com/roomthirteen/Room13AsseticServerBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Benjamin Seibert",
+            "email": "benjamin.seibert@roomthriteen.de",
+            "homepage": "http://roomthirteen.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Room13\AsseticServerBundle": "/"
+        }
+    }
+}
